@@ -1,0 +1,31 @@
+STAY BURIED — DRAG INTERACTION REBUILD
+
+ROOT CAUSE
+The old drag engine forcibly centered every drag clone beneath the pointer.
+That made an item jump when it was grabbed anywhere other than its center.
+Scene 3 exaggerated the problem because the source element is a large,
+generous discovery hit area rather than a small physical card.
+
+FIXES
+- Scene 3 now creates a compact physical evidence-card proxy when dragging.
+- The cursor sits 24px inside that card, so the dragged object stays visibly attached to the pointer.
+- Room 2 action files, Room 3 workbench evidence, and Room 3 packages preserve the exact original grab point.
+- Valid drop zones are detected by explicit bounding-box hit testing.
+- Drop target is recalculated at the actual release coordinates.
+- The Evidence Tray visibly activates and highlights while a discovered clue is being dragged over it.
+- Active drag uses a grabbing cursor and blocks accidental text selection.
+- Existing select-then-place accessibility remains unchanged.
+
+RUNTIME QA
+{
+  "scene3_cursor_anchor_error_px": {
+    "x": 0.19,
+    "y": 2.83
+  },
+  "scene3_tray_highlights_on_drag": true,
+  "scene3_actual_pointer_drop_recovers": true,
+  "scene2_preserved_grab_error_px": {
+    "x": 0.81,
+    "y": 2.95
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "one_renderScene3": true,
+  "one_renderS3Combine": true,
+  "one_renderS3Route": true,
+  "no_assemble_function": true,
+  "no_built_property": true,
+  "no_clear_workbench": true,
+  "one_combine_gate": true,
+  "one_route_gate": true
+}

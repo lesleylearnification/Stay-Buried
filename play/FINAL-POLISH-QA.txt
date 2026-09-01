@@ -1,0 +1,19 @@
+STAY BURIED — FINAL POLISH / CUTS
+
+Incorporated improvements:
+- Cut redundant Scene 3 explanatory prose.
+- Removed redundant handoff-readiness label from the visible UI.
+- Kept combine/handoff assessment neutral until commit.
+- Reduced visual noise in package status and evidence areas.
+- Strengthened post-commit consequence reconstruction with package-by-package explanation.
+- Preserved disastrous endings for disastrous package construction.
+- Preserved perfect-path behavior.
+
+{
+  "wrong_packages_advance": true,
+  "no_combine_feedback_container": true,
+  "no_route_feedback_container": true,
+  "consequence_cards_present": true,
+  "disastrous_result_present": true,
+  "perfect_still_holds": true
+}

@@ -1,0 +1,37 @@
+STAY BURIED — CAT · THE WATCHER
+FINISHED PROTOTYPE FINAL ACCEPTANCE REPORT
+
+FINAL-PASS IMPROVEMENTS
+- Added one-time MEMORY RESTORED explanation.
+- Added visible time progression: MIDNIGHT → DEEP NIGHT → PRE-DAWN → SUNRISE.
+- Added restrained narrative bridge lines for the Watcher.
+- Introduced BLACK MARK only when actually earned.
+- Preserved Room 1 FIND, Room 2 ORDER, Room 3 synthesis.
+- Preserved Scene 3 UNSEEN → DISCOVERED → SELECTED/DRAGGING → RECOVERED states.
+- Preserved corrected pointer-attached drag interaction.
+- Reduced Scene 3 discovered-state boxiness.
+- Removed answer-leaking numbered placeholders from unrecovered evidence.
+- Strengthened the final journal and added a portable reasoning heuristic.
+- Differentiated perfect / partial / weak sunrise outcomes.
+- Renamed replay CTA to ENTER THE ARCHIVE AGAIN.
+- Kept select-then-place accessibility behavior.
+- Raised Gmail hotspot stacking priority and verified multiple offset clicks.
+
+RUNTIME QA
+{
+  "room1_gmail_hit_tests": "7/7",
+  "room2_drag_anchor_error_px": {
+    "x": 0.81,
+    "y": 2.95
+  },
+  "room3_drag_anchor_error_px": {
+    "x": 0.18,
+    "y": 2.82
+  },
+  "replay_resets_core_state": true,
+  "room2_keyboard_select_place": true
+}
+
+FINAL STATUS
+Core Source-of-Truth mechanics, drag interaction, final reflection, replay, and mobile smoke checks passed.
+Rendered screenshots are included in /qa-final.

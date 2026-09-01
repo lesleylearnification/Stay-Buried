@@ -1,0 +1,18 @@
+Scene 3 combine polish based on screenshot/code audit
+
+- Individual package fragments are removable.
+- Invalid packages remain locally repairable.
+- Assemble buttons activate only at 2 pieces.
+- Valid packages seal visibly.
+- Invalid packages get package-specific diagnostic feedback.
+- Used evidence stays readable.
+- Handoff readiness is explicitly labeled and only unlocks after two valid packages.
+
+{
+  "assemble_buttons_enable_at_two_pieces": true,
+  "invalid_package_repairable": true,
+  "handoff_locked_while_invalid": true,
+  "handoff_enabled_after_two_valid": true,
+  "ready_label": true,
+  "advances_to_handoff": true
+}

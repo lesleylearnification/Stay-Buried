@@ -1,0 +1,19 @@
+Scene 3 Source-of-Truth correction
+
+- Any two-piece package may be assembled.
+- CONTINUE TO HAND OFF activates after both packages are assembled, regardless of correctness.
+- No correctness feedback appears during COMBINE.
+- No correctness feedback appears during HAND OFF.
+- Package composition and routing are evaluated only after SEAL RESPONSE.
+- Disastrous package construction can produce a disastrous consequence.
+- Perfect construction/routing still produces THE TRANSFER HELD.
+
+{
+  "wrong_packages_can_be_assembled": true,
+  "no_correctness_feedback_on_combine": true,
+  "advanced_to_handoff": true,
+  "seal_response_live": true,
+  "no_route_correctness_feedback": true,
+  "disastrous_consequence_after_commit": true,
+  "perfect_consequence_still_holds": true
+}

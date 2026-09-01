@@ -1,0 +1,16 @@
+STAY BURIED — Scene 3 Semantic Environment Rebuild
+
+Implemented:
+- Replaced unrelated sanctuary background with the locked semantic-evidence sanctuary direction.
+- Mapped all five evidence hotspots to visible in-world objects.
+- Added three plausible inspectable decoys that do not count.
+- Evidence Tray begins empty and accumulates only recovered evidence.
+- Removed answer-shaped unrecovered placeholders.
+- Preserved separate discovery and recovery states.
+
+{
+  "tray_starts_empty": true,
+  "three_decoys": true,
+  "all_five_discover_then_recover": true,
+  "decoy_does_not_count": true
+}

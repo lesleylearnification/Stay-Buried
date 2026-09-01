@@ -1,0 +1,19 @@
+{
+  "no_assemble_buttons": true,
+  "no_clear_workbench": true,
+  "all_2plus2_partitions_enable_continue": 30,
+  "wrong_2plus2_activates_continue": true,
+  "remove_one_disables_continue": true,
+  "replace_fourth_reenables_continue": true,
+  "location_integrity_true": true,
+  "seal_initially_disabled": true,
+  "one_route_still_disabled": true,
+  "two_routes_enable_seal": true,
+  "wrong_relationships_break_through": true,
+  "perfect_scene3_holds": true,
+  "partial_scene3_gap": true,
+  "no_stale_drag_ghost_after_drop": true,
+  "drag_puts_evidence_in_A": true,
+  "keyboard_select_place_scene3": true,
+  "replay_resets_new_scene3_state": true
+}

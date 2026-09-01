@@ -1,0 +1,27 @@
+STAY BURIED — CAT · THE WATCHER
+MASTER SOURCE-OF-TRUTH BUILD QA
+
+ADDITIONAL IMPROVEMENTS ADDED
+- Scene 3 now has explicit UNSEEN → DISCOVERED → SELECTED → RECOVERED state architecture.
+- Undiscovered Scene 3 evidence cannot be dragged.
+- Clicking Scene 3 evidence discovers it first; recovery is a separate action.
+- Discovered evidence gains restrained FOUND · DRAG affordance.
+- Evidence Tray instruction is reduced to DROP EVIDENCE HERE.
+- Search instruction explicitly teaches the interaction loop.
+- Keyboard/select-place recovery remains available.
+- Development hotspot geometry mode is available only with ?qa=hotspots.
+- Final journal explicitly reconstructs WHAT YOU DID / WHY IT MATTERED / MEMORY EFFECT / YOUR REFLECTION / NEXT TIME.
+
+RUNTIME QA
+PASS — landing renders.
+PASS — Room 1 Gmail/bottom-right hotspot center activates.
+PASS — Room 2 has six actions and three handoff slots.
+PASS — Room 3 begins with evidence unseen.
+PASS — first click creates DISCOVERED state without recovering evidence.
+PASS — second/select-place action recovers evidence to tray.
+PASS — Combine phase renders five recovered evidence fragments.
+PASS — Hand Off phase renders two built packages and destinations.
+PASS — mobile landing renders.
+PASS — mobile Scene 3 search state renders.
+PASS — JavaScript syntax check.
+PASS — single current Scene 3 discovery/recovery architecture.

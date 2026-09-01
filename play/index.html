@@ -1,0 +1,502 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>STAY BURIED — CAT · THE WATCHER</title>
+<style>
+:root{
+ --bg:#020708;--panel:#061316;--panel2:#091b1e;--text:#f7f0e4;--muted:#c3cfcd;
+ --line:#50686b;--gold:#efbd58;--teal:#74dfcd;--red:#e27b68;--green:#76dfb6;--focus:#fff0a8;
+}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{margin:0;background:radial-gradient(ellipse at 50% 0,#10282b,#061012 38%,#020708 76%);color:var(--text);font:16px/1.5 Arial,sans-serif;min-height:100vh}
+button,textarea{font:inherit}
+button{cursor:pointer;min-height:44px}
+button:focus-visible,textarea:focus-visible,[tabindex]:focus-visible{outline:4px solid var(--focus);outline-offset:3px}
+button:disabled{opacity:.5;cursor:not-allowed}
+.wrap{max-width:1450px;margin:auto;padding:16px}
+.top{display:flex;justify-content:space-between;gap:18px;align-items:end;border-bottom:1px solid #715f41;padding-bottom:13px}
+.top h1{font:700 clamp(2.5rem,5vw,4.6rem)/.94 Georgia;margin:0;letter-spacing:.05em}
+.tag{font:italic 1rem Georgia;color:var(--gold)}
+.flow{font-weight:800;text-align:right}
+.panel{background:linear-gradient(145deg,rgba(7,20,23,.98),rgba(3,11,14,.99));border:1px solid var(--line);border-radius:10px}
+.game{display:grid;grid-template-columns:minmax(0,1fr) 330px;gap:14px;margin-top:15px}
+.main{padding:14px;min-height:720px}.status{padding:12px;align-self:start;position:sticky;top:10px}
+.eyebrow{font-size:.76rem;font-weight:900;letter-spacing:.13em;color:var(--teal)}
+h2{font:700 1.65rem Georgia;margin:.4rem 0 .9rem}.muted{color:var(--muted)}
+.primary{background:var(--gold);color:#111;border:0;border-radius:7px;padding:11px 15px;font-weight:900}
+.secondary{background:#102427;color:#fff;border:1px solid #60787b;border-radius:7px;padding:9px 13px}
+.nav{display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:12px}.nav span{border:1px solid #536c6f;border-radius:999px;padding:8px;text-align:center;font-size:.78rem}.nav .on{border-color:var(--gold);color:var(--gold)}
+.hud{border:1px solid #6a593d;padding:10px}.hudRow{display:flex;justify-content:space-between;font-weight:900}.meter{height:14px;border:1px solid #d3dedc;border-radius:999px;overflow:hidden;margin-top:6px}.fill{height:100%;background:var(--teal);width:0}
+.avatar{width:100%;height:300px;object-fit:cover;object-position:center 18%;border:1px solid #6d624d;margin-top:8px}.buried{width:100%;height:145px;object-fit:cover;border:1px solid #754338;border-radius:6px}.statusSec{border-top:1px solid #4e686b;margin-top:12px;padding-top:12px}
+.scene{position:relative;border:1px solid #725f41;border-radius:9px;overflow:hidden;background:#071416}.scene img{width:100%;display:block}.scene:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 65px rgba(0,0,0,.62)}
+.sceneHud{position:absolute;z-index:7;top:10px;right:10px;display:flex;gap:8px;align-items:center}.counter{background:rgba(4,13,15,.94);border:1px solid var(--gold);border-radius:999px;padding:7px 11px;font-weight:900}
+.roomInstruction{position:absolute;z-index:6;left:12px;bottom:12px;background:rgba(4,13,15,.94);border:1px solid #715a29;padding:7px 12px}
+.hotspot{position:absolute;z-index:5;transform:translate(-50%,-50%);border:0;background:transparent;opacity:0;border-radius:50%;cursor:default}
+.hotspot:focus-visible:not(.found){opacity:1;border:2px dashed var(--focus);background:rgba(255,240,168,.07)}
+.hotspot.found{opacity:1;border:1px solid rgba(117,223,205,.7);background:radial-gradient(circle,rgba(117,223,205,.22),rgba(117,223,205,.06) 45%,transparent 68%);box-shadow:0 0 16px rgba(117,223,205,.22)}
+.hotspot.found:after{content:"FOUND";position:absolute;left:50%;top:calc(50% + 42px);transform:translateX(-50%);font-size:.52rem;letter-spacing:.12em;background:#071719;color:#eafffb;padding:2px 5px;border-radius:3px}
+.ledger{margin-top:10px;border:1px solid #405a5d;border-radius:8px;padding:11px}.clueGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.clue{border:1px solid #425b5e;border-radius:6px;background:#09191b;padding:9px}.clue.empty{border-style:dashed;color:#839295}
+.inspect{margin-top:9px;border:1px solid #4a6467;border-radius:7px;background:#0a1c1f;padding:10px}.inspectInner{display:grid;grid-template-columns:150px 1fr;gap:11px}.inspect img{width:150px;height:100px;object-fit:cover;border:1px solid #6d7d7f}
+.complete{margin-top:10px;border-left:4px solid var(--green);background:#0c2825;padding:10px}
+.journal{display:grid;grid-template-columns:1fr 1fr;max-width:970px;margin:18px auto;background:#5b3820;border:7px solid #3c2516;border-radius:12px;padding:12px;color:#25190d}.page{min-height:430px;background:linear-gradient(90deg,#ead8aa,#f6e9c3);padding:25px;border:1px solid #957542}.page.blank{background:linear-gradient(90deg,#f1e2b9,#fff1cc)}.page textarea{width:100%;min-height:175px;background:#fff9e9;color:#1f170d;border:1px solid #806a44;padding:10px}
+.choices{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}.choice{background:#0a1e21;color:#fff;border:1px solid #5b7679;border-radius:7px;padding:12px;text-align:left}.choice strong{display:block;margin-bottom:5px}.evidenceGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:12px}.memoryShift{margin:14px 0;border-left:5px solid var(--gold);background:#09191b;padding:13px}.memoryShift.good{border-left-color:var(--green)}.memoryShift.bad{border-left-color:var(--red)}
+.branch{border-left:4px solid var(--gold);background:#0c2a2d;padding:10px 12px;margin-bottom:10px}
+.clinicScene{border:1px solid #715f41;border-radius:9px;background:linear-gradient(rgba(0,0,0,.18),rgba(0,0,0,.58)),url("assets/cat-room2-clean.png") center/cover no-repeat;min-height:320px;padding:22px;display:flex;justify-content:center;align-items:center}
+.caseDoc{max-width:680px;background:#664421;color:#fff0d7;border:1px solid #d0a45b;border-radius:7px;padding:17px;box-shadow:0 16px 36px rgba(0,0,0,.42)}
+.actionTray{margin-top:12px}.actionGrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.actionCard{background:#0b1d20;color:#fff;border:1px solid #60787b;border-radius:7px;padding:11px;text-align:left;cursor:grab;user-select:none;touch-action:none}.actionCard.selected{border-color:var(--gold);background:#231e10}.actionCard.used{opacity:.42}
+.handoff{margin-top:12px;border:1px solid #405a5d;border-radius:8px;background:#071719;padding:12px}.slots{display:grid;grid-template-columns:1fr auto 1fr auto 1fr;gap:8px;align-items:stretch}.slot{border:2px dashed #5b7376;border-radius:7px;min-height:110px;padding:10px;display:flex;flex-direction:column;justify-content:center}.slot.hover{border-color:var(--gold);background:#1f1c10}.slot.filled{border-style:solid;border-color:#ad8a48;background:#211c10}.arrow{display:grid;place-items:center;color:var(--gold);font-size:1.4rem}.controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.dragGhost{position:fixed;z-index:9999;pointer-events:none;opacity:.94;transform:rotate(-1deg);box-shadow:0 18px 38px rgba(0,0,0,.48)}
+.s3Top{display:flex;justify-content:space-between;gap:10px;align-items:center;border:1px solid #405a5d;background:#071719;padding:10px 12px;border-radius:7px;margin-bottom:10px}.tray{margin-top:10px;border:1px solid #405a5d;border-radius:7px;background:#071719;padding:10px}.trayGrid{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}.piece{border:1px solid #526d70;border-radius:6px;background:#0a1c1f;padding:8px;min-height:72px}.piece.empty{border-style:dashed;color:#839295}
+.workbench{border:1px solid #405a5d;border-radius:8px;background:#071719;padding:12px}.evidenceDeck{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.evidence{background:#0a1c1f;color:#fff;border:1px solid #5a7477;border-radius:7px;padding:10px;text-align:left;cursor:grab;user-select:none;touch-action:none}.evidence.selected{border-color:var(--gold);background:#221d10}.evidence.used{opacity:.4}
+.packageArea{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}.packageSlot{min-height:145px;border:2px dashed #60777a;border-radius:8px;background:#081719;padding:10px}.packageSlot.hover{border-color:var(--gold);background:#1f1c10}.fragment{border:1px solid #4d6669;background:#0d2023;border-radius:5px;padding:6px;margin-top:5px}
+.routing{display:grid;grid-template-columns:1fr 1fr;gap:10px}.packageCard{background:#241d10;color:#fff;border:1px solid #b38e49;border-radius:8px;padding:11px;text-align:left;cursor:grab;user-select:none;touch-action:none}.packageCard.selected{box-shadow:0 0 0 3px rgba(239,189,88,.24)}.destinations{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-top:12px}.destination{background:#0a1d1f;color:#fff;border:1px solid #5a7477;border-radius:7px;padding:11px;text-align:left;min-height:105px}.destination.hover{border-color:var(--gold);background:#1d1a10}
+.sunrise{width:100%;max-height:300px;object-fit:cover;border:1px solid #715f41;border-radius:8px}
+.sr{position:absolute!important;width:1px!important;height:1px!important;overflow:hidden!important;clip:rect(0,0,0,0)!important;white-space:nowrap!important}
+@media(max-width:1000px){.game{grid-template-columns:1fr}.status{position:static}.actionGrid,.evidenceDeck{grid-template-columns:1fr 1fr}.trayGrid{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.top{display:block}.flow{text-align:left;margin-top:7px}.nav{grid-template-columns:1fr 1fr}.choices,.evidenceGrid,.packageArea,.routing,.destinations{grid-template-columns:1fr}.slots{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.journal{grid-template-columns:1fr}.actionGrid,.evidenceDeck{grid-template-columns:1fr}.inspectInner{grid-template-columns:1fr}.inspect img{width:100%;height:160px}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* SOURCE-OF-TRUTH LANDING + SCENE 3 RECOVERY */
+body.landing .game{display:block}body.landing .status{display:none}body.landing .main{padding:0;min-height:0;border:0;background:none}
+.landingStage{position:relative;min-height:720px;border:1px solid #6f5d40;border-radius:12px;overflow:hidden;background:linear-gradient(90deg,rgba(2,8,10,.96),rgba(2,8,10,.77) 44%,rgba(2,8,10,.38) 78%),url("assets/archive-landing-bg.png") center/cover no-repeat}
+.landingStage:after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 120px rgba(0,0,0,.85)}
+.landingContent{position:relative;z-index:2;display:grid;grid-template-columns:minmax(0,1fr) 360px;gap:26px;padding:40px}.landingHeadline{font:700 clamp(3rem,7vw,6rem)/.88 Georgia;margin:.1rem 0;letter-spacing:.06em}.memoryMissing{font:700 1.8rem Georgia;color:#f2dfb7;margin:18px 0 8px}.landingMission{font-size:1.12rem;max-width:650px}.catPortal{margin-top:24px;display:grid;grid-template-columns:170px 1fr;gap:14px;align-items:center;border:1px solid #64756e;background:rgba(6,20,22,.86);padding:13px;border-radius:9px}.catPortal img{width:170px;height:210px;object-fit:cover;object-position:center 18%;border:1px solid #697669;filter:grayscale(.82);opacity:.55}.memoryLanding{margin:15px 0;border:1px solid #5a7376;background:rgba(6,21,23,.88);padding:9px;max-width:500px}.journey{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-top:12px}.journeyCard{border:1px solid #566e71;border-radius:6px;overflow:hidden;background:#071719}.journeyCard img{width:100%;height:105px;object-fit:cover;display:block}.journeyCard div{padding:7px;font-size:.72rem;font-weight:900}.buriedPortal{align-self:center;border:1px solid #6c4036;background:rgba(18,8,8,.82);padding:11px;border-radius:9px}.buriedPortal img{width:100%;height:240px;object-fit:cover;border:1px solid #704337}.threshold{margin-top:15px}.threshold .primary{font-size:1.05rem;padding:13px 20px}
+.recoveryTray{margin-top:10px;border:1px solid #405a5d;border-radius:8px;background:#071719;padding:10px}.recoveryStrip{display:grid;grid-template-columns:repeat(5,1fr);gap:7px;margin-top:8px}.recoveredPiece{border:1px solid #51696c;border-radius:6px;background:#0a1c1f;padding:8px;min-height:76px}.recoveredPiece.empty{border-style:dashed;color:#839295}.trayDrop{border:2px dashed #5f777a;border-radius:8px;min-height:90px;padding:10px;display:flex;align-items:center;justify-content:center;text-align:center}.trayDrop.hover{border-color:var(--gold);background:#1f1b10}
+.recoverable{position:absolute;z-index:6;transform:translate(-50%,-50%);width:180px;height:165px;border:0;background:transparent;opacity:0;border-radius:16px;cursor:grab;touch-action:none}.recoverable:focus-visible:not(.recovered){opacity:1;border:2px dashed var(--focus);background:rgba(255,240,168,.07)}.recoverable.selected{opacity:1;border:2px solid var(--gold);background:rgba(239,189,88,.08)}.recoverable.recovered{display:none}
+.packageSlot .seal{display:inline-block;border:2px solid var(--teal);padding:4px 8px;margin-top:7px;transform:rotate(-1deg);font-weight:900;letter-spacing:.05em}
+@media(max-width:1050px){.landingContent{grid-template-columns:1fr}.buriedPortal{max-width:500px}}@media(max-width:760px){.landingContent{padding:22px}.catPortal{grid-template-columns:1fr}.catPortal img{width:100%;height:210px}.journey{grid-template-columns:1fr}.recoveryStrip{grid-template-columns:1fr 1fr}}
+
+
+/* MASTER SOT: Scene 3 has distinct UNSEEN → DISCOVERED → RECOVERED states. */
+.recoverable{
+ position:absolute;z-index:6;transform:translate(-50%,-50%);
+ border:0;background:transparent;border-radius:16px;touch-action:none;
+}
+.recoverable.unseen{opacity:0;cursor:default}
+.recoverable.unseen:focus-visible{opacity:1;border:2px dashed var(--focus);background:rgba(255,240,168,.06)}
+.recoverable.discovered{
+ opacity:1;cursor:grab;border:1px solid rgba(121,223,206,.62);
+ background:radial-gradient(ellipse at center,rgba(121,223,206,.14),rgba(121,223,206,.04) 55%,transparent 74%);
+ box-shadow:0 0 10px rgba(121,223,206,.14)
+}
+.recoverable.discovered:after{
+ content:"FOUND · DRAG";position:absolute;left:50%;bottom:7px;transform:translateX(-50%);
+ white-space:nowrap;font-size:.55rem;letter-spacing:.09em;font-weight:900;
+ color:#effffb;background:rgba(4,16,18,.94);border:1px solid #66888a;border-radius:3px;padding:3px 5px
+}
+.recoverable.selected{outline:3px solid var(--gold);outline-offset:2px}
+.recoverable.recovered{display:none}
+.searchInstruction{border-left:4px solid var(--gold);background:#0a1c1f;padding:10px 12px;margin:8px 0 12px}
+.searchInstruction strong{display:block;letter-spacing:.08em}
+.trayDrop{transition:border-color .15s,background .15s}
+.trayDrop.dragReady{border-color:var(--gold);box-shadow:0 0 0 2px rgba(239,189,88,.15) inset}
+.debugHotspot{outline:2px dashed #ffef78!important;opacity:.35!important;background:rgba(255,0,0,.08)!important}
+
+
+/* FINAL PRODUCTION POLISH */
+.timeBand{
+ display:inline-flex;align-items:center;gap:8px;margin-bottom:8px;
+ padding:5px 9px;border:1px solid #50676a;border-radius:999px;
+ background:rgba(5,18,20,.88);font-size:.72rem;font-weight:900;letter-spacing:.12em;color:var(--teal)
+}
+.sceneReaction{
+ border-left:4px solid #6f5d40;background:#0b1d20;padding:9px 11px;margin:10px 0;
+ color:#e6ece9
+}
+.blackMark{
+ border:1px solid #8a493e;background:#1c0e0d;color:#ffd5ca;border-radius:7px;padding:9px 10px;margin-top:8px
+}
+.recoverable.discovered{
+ outline:none!important;
+ border-color:rgba(121,223,206,.42)!important;
+ background:radial-gradient(circle at center,rgba(121,223,206,.11),rgba(121,223,206,.02) 44%,transparent 68%)!important;
+ box-shadow:0 0 8px rgba(121,223,206,.12)!important
+}
+.recoverable.discovered:after{
+ content:"FOUND · DRAG";font-size:.52rem;bottom:5px;
+ border-color:#607b7d;background:rgba(4,16,18,.92);padding:2px 4px
+}
+.recoveredPiece.empty{
+ color:#7e8c8e;display:grid;place-items:center;text-align:center;
+ min-height:78px;background:linear-gradient(145deg,#081619,#071214)
+}
+.recoveredPiece.empty::before{content:"?";font:700 1.35rem Georgia;color:#667779}
+.finalHeuristic{
+ border:1px solid #6e5c3e;background:#16140d;padding:13px;border-radius:8px;margin:12px 0
+}
+.finalHeuristic strong{color:var(--gold)}
+.endActions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}
+/* Ensure the troublesome Gmail target wins any small overlap near the bottom-right evidence cluster. */
+.hotspot[data-s1="gmail"]{z-index:7}
+
+
+/* COMBINE FLOW POLISH */
+.evidence.used{opacity:.68!important;filter:none!important}
+.packageSlot{position:relative}
+.packageSlot .packageStatus{display:block;margin-top:8px;font-size:.68rem;letter-spacing:.08em;font-weight:900;color:var(--muted)}
+.packageSlot.packageBuilt{border-style:solid!important;border-color:var(--gold)!important;background:linear-gradient(145deg,#241d10,#15120b)!important}
+.packageSlot.packageError{border-color:var(--viz-border, #6b7778)!important;background:inherit!important}
+.fragmentRow{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:5px}
+.fragmentRow .fragment{margin:0;flex:1}
+.fragmentRemove{min-height:36px!important;min-width:36px;width:36px;padding:0;border-radius:999px;border:1px solid #6b7778;background:#111f21;color:#fff;font-weight:900}
+.fragmentRemove:hover{border-color:var(--gold)}
+.assembleBtn:disabled{opacity:.38!important}
+#toRoute.ready{box-shadow:0 0 0 2px rgba(239,189,88,.18),0 0 18px rgba(239,189,88,.12)}
+.handoffGate{margin-left:auto;font-size:.72rem;color:var(--muted);align-self:center}
+.handoffGate.ready{color:var(--gold);font-weight:900}
+.combineFeedbackStrong{border-left:4px solid var(--green)}
+.combineFeedbackError{border-left:4px solid var(--red)}
+.workbenchHeader{display:flex;justify-content:space-between;gap:12px;align-items:flex-end;margin-bottom:10px}
+
+
+/* FINAL POLISH / CUTS */
+.sceneReaction.compact{
+ margin:8px 0 10px;
+ padding:8px 10px;
+ font-size:.92rem;
+}
+.s3Top{
+ margin-bottom:8px!important;
+}
+.workbenchHeader{
+ margin-bottom:8px!important;
+}
+.workbenchHeader .muted{
+ font-size:.9rem;
+}
+.handoffGate{
+ display:none!important;
+}
+.packageStatus{
+ opacity:.82;
+}
+.packageSlot{
+ min-height:132px!important;
+}
+.packageSlot .packageStatus{
+ font-size:.62rem!important;
+ letter-spacing:.06em!important;
+}
+.fragment{
+ font-size:.9rem;
+}
+.controls{
+ align-items:center;
+}
+.combineRule{
+ margin:0 0 10px;
+ color:var(--muted);
+ font-size:.9rem;
+}
+.consequenceGrid{
+ display:grid;
+ grid-template-columns:repeat(2,minmax(0,1fr));
+ gap:10px;
+ margin:12px 0;
+}
+.consequenceCard{
+ border:1px solid #405a5d;
+ border-radius:8px;
+ background:#071719;
+ padding:11px;
+}
+.consequenceCard strong{
+ display:block;
+ margin-bottom:4px;
+}
+@media(max-width:760px){
+ .consequenceGrid{grid-template-columns:1fr}
+}
+
+
+.scene3Prompt{border-left:4px solid var(--gold);background:#0a1c1f;padding:10px 12px;margin:8px 0 12px}
+.scene3Prompt strong{display:block;letter-spacing:.08em}
+.decoyHotspot{position:absolute;z-index:5;transform:translate(-50%,-50%);width:140px;height:120px;border:0;background:transparent;opacity:0;border-radius:14px}
+.decoyHotspot:focus-visible{opacity:1;border:2px dashed var(--focus);background:rgba(255,240,168,.05)}
+.discoveredResidue{position:absolute;z-index:4;transform:translate(-50%,-50%);width:92px;height:78px;pointer-events:none;background:radial-gradient(circle,rgba(121,223,206,.13),rgba(121,223,206,.025) 52%,transparent 72%)}
+.recoveryStrip.semantic{display:flex!important;flex-wrap:wrap;gap:8px;grid-template-columns:none!important}
+.recoveryStrip.semantic .recoveredPiece{flex:1 1 210px;min-height:auto}
+
+/* RELEASE CANDIDATE — simplified Scene 3 structural gates */
+.packageArea{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.packageSlot{min-height:132px;border:2px dashed #60777a;border-radius:8px;background:#081719;padding:10px}
+.packageSlot.filled{border-style:solid;border-color:#8b7a51}
+.packageSlot .packageCount{font-size:.68rem;letter-spacing:.08em;font-weight:900;color:var(--muted);margin-top:8px}
+.fragmentRow{display:flex;align-items:center;gap:8px;margin-top:6px}.fragmentRow .fragment{margin:0;flex:1}
+.fragmentRemove{min-height:36px!important;min-width:36px;width:36px;padding:0;border-radius:999px;border:1px solid #657779;background:#112124;color:#fff;font-weight:900}
+.fragmentRemove:hover{border-color:var(--gold)}
+#toRoute.ready,#seal3.ready{box-shadow:0 0 0 2px rgba(239,189,88,.16),0 0 16px rgba(239,189,88,.10)}
+.poolHint{font-size:.88rem;color:var(--muted);margin:0 0 8px}.packageCard .packageItems{font-size:.9rem;color:var(--muted);margin-top:5px}
+@media(max-width:760px){.packageArea{grid-template-columns:1fr}}
+.repo-back{position:fixed;z-index:99999;top:14px;left:14px;background:#07151b;border:1px solid #63f3ff;color:#eaffff;text-decoration:none;padding:11px 14px;border-radius:4px;font:800 11px/1.2 Arial,sans-serif;letter-spacing:.08em;min-height:44px;display:flex;align-items:center}.repo-back:hover,.repo-back:focus{background:#0b2731;outline:2px solid #f0c45a;outline-offset:2px}@media(max-width:650px){.repo-back{top:auto;bottom:12px}}</style>
+</head>
+<body class="landing"><a class="repo-back" href="../index.html" aria-label="Back to STAY BURIED repository">← BACK TO REPOSITORY</a>
+<div id="live" class="sr" aria-live="assertive" aria-atomic="true"></div>
+<div class="wrap">
+<header class="top"><div><div class="eyebrow">THE ARCHIVE</div><h1>STAY BURIED</h1><div class="tag">Some cases don't know when they're closed.</div></div><div class="flow">Explore → Reflect → Reveal → Decide → Consequence</div></header>
+<div class="game">
+<main class="main panel" id="screen"></main>
+<aside class="status panel">
+ <div class="eyebrow">YOUR RETRIEVER</div>
+ <div class="hud"><div class="hudRow"><span>MEMORY RESTORED</span><span id="scoreText">0%</span></div><div class="meter" role="progressbar" aria-label="Memory restored" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0"><div id="fill" class="fill"></div></div><p id="memoryState">Faded — fragments missing.</p></div>
+ <img id="avatar" class="avatar" src="assets/cat.png" alt="The Watcher, a black cat Retriever">
+ <section class="statusSec"><div class="eyebrow">THE BURIED</div><img id="buried" class="buried" src="assets/buried.png" alt="The Buried"><p id="threat">Contained. Threat LOW.</p></section>
+ <section class="statusSec"><div class="eyebrow">YOUR PATH</div><div id="path">No decisions yet.</div></section>
+</aside>
+</div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const state={
+ score:0,black:0,decisions:[],journals:["","",""],stage:0,
+ s1Found:new Set(),s2Route:[null,null,null],s2Selected:null,
+ s3Discovered:new Set(),s3Recovered:new Set(),s3RecoverSelected:null,
+ s3Locations:{login:"UNUSED",identity:"UNUSED",role:"UNUSED",temp:"UNUSED",owner:"UNUSED"},
+ s3Routes:{A:null,B:null},s3PackageSelected:null,
+ telemetry:{s1Clicks:0,s2Moves:0,s3WrongCombos:0,s3WrongRoutes:0,falseLead:false}
+};
+const S1=[
+ {id:"lanyard",name:"Controlled work context",desc:"A company access lanyard confirms this is controlled work material.",x:27,y:31,w:190,h:190},
+ {id:"tablet",name:"Customer records ready to export",desc:"A company tablet shows customer renewal records prepared for export.",x:59,y:43,w:190,h:190},
+ {id:"gmail",name:"Personal Gmail destination",desc:"A note among the lower-right papers sends the renewal sheet to a personal Gmail address.",x:79,y:81,w:220,h:180},
+ {id:"manager",name:"Legitimate manager authorization",desc:"The authorization evidence near the moving box confirms legitimate authority to use the records.",x:69,y:68,w:170,h:150}
+];
+const ACTIONS=[
+ {id:"preserve",title:"PRESERVE FACTS & TIME",desc:"Record exact facts and disclosure time.",stamp:"FACTS PRESERVED"},
+ {id:"limits",title:"EXPLAIN CONFIDENTIALITY LIMITS",desc:"Do not promise absolute secrecy.",stamp:"LIMITS EXPLAINED"},
+ {id:"designated",title:"USE DESIGNATED AFTER-HOURS RESPONSE",desc:"Use the designated response process.",stamp:"DESIGNATED RESPONSE"},
+ {id:"secret",title:"PROMISE COMPLETE SECRECY",desc:"Assure the reporter nobody else will be told.",stamp:"SECRECY PROMISED"},
+ {id:"broadcast",title:"TELL THE WHOLE CLINIC",desc:"Broadcast the concern to all staff.",stamp:"BROADCAST"},
+ {id:"owner",title:"BYPASS TO CLINIC OWNER",desc:"Skip the designated process.",stamp:"BYPASSED"}
+];
+const S3=[
+ {id:"login",name:"Borrowed-login request",desc:"A note beside the sanctuary staff terminal says to use Mara's login tonight.",x:25,y:33,required:true},
+ {id:"identity",name:"Identity/accountability rule",desc:"A posted access notice says credentials are individual and activity must remain attributable.",x:17,y:70,required:true},
+ {id:"role",name:"Volunteer role need",desc:"Tonight's volunteer assignment sheet shows a legitimate need for limited care and scheduling access.",x:84,y:49,required:true},
+ {id:"temp",name:"Temporary-access procedure",desc:"A supervisor station holds the temporary-access request process and individual access materials.",x:82,y:83,required:true},
+ {id:"owner",name:"Absent-worker note",desc:"The shift board shows Mara is off site. This explains urgency, not authorization.",x:43,y:16,required:true}
+];
+const S3_DECOYS=[
+ {id:"medlog",name:"Medication log",desc:"Routine animal-care documentation. It does not change the access question.",x:91,y:31},
+ {id:"firstaid",name:"First-aid kit",desc:"Important sanctuary equipment, but it does not explain the access decision.",x:94,y:91},
+ {id:"feeding",name:"Feeding supplies",desc:"Routine care materials. Nothing here changes identity, accountability, or access.",x:48,y:58}
+];
+
+const SCORE={s1:{O:30,K:15,S:0},s2:{O:35,K:18,S:0},s3:{O:35,K:18,S:0}};
+function announce(msg){$("live").textContent="";setTimeout(()=>$("live").textContent=msg,10)}
+function nav(n){return `<div class="nav"><span class="${n===1?"on":""}">1 · SOMETHING'S OFF</span><span class="${n===2?"on":""}">2 · ACTION & ESCALATION</span><span class="${n===3?"on":""}">3 · RETENTION & READINESS</span><span class="${n===4?"on":""}">4 · FINAL JOURNAL</span></div>`}
+function updateHUD(){
+ $("scoreText").textContent=state.score+"%";$("fill").style.width=state.score+"%";document.querySelector(".meter").setAttribute("aria-valuenow",state.score);
+ $("memoryState").textContent=state.score===0?"Faded — fragments missing.":state.score<30?"Fragments returning.":state.score<65?"The Watcher is taking shape.":state.score<100?"Nearly restored.":"Fully restored.";
+ const a=$("avatar");a.style.opacity=.28+state.score*.0072;a.style.filter=`grayscale(${Math.max(0,1-state.score/100)}) contrast(${.85+state.score/300})`;
+ $("buried").style.opacity=1-state.score*.005;$("threat").textContent=state.black>=2?"The Buried is pressing through. Threat HIGH.":state.black===1?"The Buried is stirring. Threat MEDIUM.":"Contained. Threat LOW.";
+ $("path").innerHTML=state.decisions.length?state.decisions.map((d,i)=>`<div>Room ${i+1}: ${d.label}${d.rating==="S"?' · BLACK MARK':""}</div>`).join(""):"No decisions yet.";
+}
+function applyScore(scene,rating,label,principle,details){
+ const before=state.score,delta=SCORE[scene][rating];state.score=Math.min(100,state.score+delta);if(rating==="S")state.black++;
+ state.decisions.push({scene,rating,label,principle,details,before,delta,after:state.score});updateHUD();return {before,delta,after:state.score};
+}
+function shift(r,rating,why,what){
+ return `<div class="memoryShift ${rating==="O"?"good":rating==="S"?"bad":""}"><strong>WHAT YOU DID</strong><p>${what}</p><strong>WHY IT MATTERED</strong><p>${why}</p><strong>MEMORY SHIFT</strong><p>${r.before}% → ${r.after}% (${r.delta>0?"+":""}${r.delta}%)</p></div>`;
+}
+function renderLanding(){
+ document.body.classList.add("landing");state.stage=0;
+ $("screen").innerHTML=`<section class="landingStage"><div class="landingContent"><div><div class="eyebrow">MIDNIGHT · THE ARCHIVE</div><div class="landingHeadline">STAY BURIED</div><div class="tag">Some cases don't know when they're closed.</div><div class="memoryMissing">YOUR MEMORIES ARE MISSING</div><p class="landingMission">The Buried stole your memories and hid them inside unresolved cases. Recover them before sunrise.</p><article class="catPortal"><img src="assets/cat.png" alt="Cat · The Watcher"><div><div class="eyebrow">CAT · THE WATCHER</div><h2>Three places. One night.</h2><div class="journey"><div class="journeyCard"><img src="assets/journey-apartment.png" alt=""><div>THE APARTMENT THAT REMEMBERS</div></div><div class="journeyCard"><img src="assets/journey-clinic.png" alt=""><div>THE CLINIC AFTER CLOSING</div></div><div class="journeyCard"><img src="assets/journey-sanctuary.png" alt=""><div>THE SANCTUARY OF BORROWED NAMES</div></div></div><div class="memoryLanding"><strong>MEMORY RESTORED · 0%</strong><div class="meter"><div class="fill" style="width:0"></div></div><span class="muted">Resolve cases well to restore what The Buried stole.</span></div><div class="threshold"><button id="enter" class="primary">ENTER THE ARCHIVE</button></div></div></article></div><aside class="buriedPortal"><div class="eyebrow">THE BURIED</div><img src="assets/buried.png" alt="The Buried"><p>The Archive is not empty. Something inside it wants unresolved cases to stay unresolved.</p><p><strong>Survive until sunrise.</strong></p></aside></div></section>`;
+ $("enter").onclick=()=>{document.body.classList.remove("landing");renderScene1()};
+}
+function renderScene1(){
+ state.stage=1;$("screen").innerHTML=nav(1)+`<div class="timeBand">MIDNIGHT · ROOM 1</div><div class="eyebrow">RECOGNITION & JUDGMENT</div><h2>THE APARTMENT THAT REMEMBERS</h2><p>Find four meaningful clues before deciding what matters.</p><section class="scene"><img src="assets/cat-room1.png" alt="Apartment investigation scene"><div class="sceneHud"><span id="s1Count" class="counter">0 of 4 clues discovered · 4 remaining</span><button id="s1Journal" class="primary" disabled>JOURNAL LOCKED</button></div>${S1.map(c=>`<button class="hotspot" data-s1="${c.id}" aria-label="Inspect object" style="left:${c.x}%;top:${c.y}%;width:${c.w}px;height:${c.h}px"></button>`).join("")}<div class="roomInstruction">Find 4 Meaningful Clues.</div></section><section class="ledger"><div class="eyebrow">DISCOVERED CLUES</div><div id="s1Ledger" class="clueGrid"></div><div id="inspect" class="inspect" hidden></div><div id="s1Complete"></div></section>`;
+ document.querySelectorAll("[data-s1]").forEach(b=>b.onclick=()=>discoverS1(b.dataset.s1,b));$("s1Journal").onclick=journal1;paintS1();
+}
+function discoverS1(id,b){
+ if(!state.s1Found.has(id)){state.s1Found.add(id);state.telemetry.s1Clicks++;b.classList.add("found")}
+ const c=S1.find(x=>x.id===id),box=$("inspect");box.hidden=false;box.innerHTML=`<div class="inspectInner"><img src="assets/s1-${id}.png" alt="Close-up of ${c.name}"><div><strong>${c.name}</strong><p>${c.desc}</p><button id="closeInspect" class="secondary">CLOSE</button></div></div>`;$("closeInspect").onclick=()=>box.hidden=true;paintS1();announce(`${c.name} discovered.`);
+}
+function paintS1(){
+ const n=state.s1Found.size;$("s1Count").textContent=`${n} of 4 clues discovered · ${4-n} remaining`;
+ $("s1Ledger").innerHTML=S1.map((c,i)=>state.s1Found.has(c.id)?`<div class="clue"><strong>${i+1}. ${c.name}</strong><div>${c.desc}</div></div>`:`<div class="clue empty">${i+1}. Not found yet</div>`).join("");
+ if(n===4){$("s1Journal").disabled=false;$("s1Journal").textContent="OPEN SPECIAL JOURNAL";$("inspect").hidden=true;$("s1Complete").innerHTML='<div class="complete"><strong>INVESTIGATION COMPLETE.</strong> All four meaningful clues are accounted for.</div>';announce("Investigation complete. Special Journal unlocked.")}
+}
+function journal1(){
+ $("screen").innerHTML=nav(1)+`<h2>SPECIAL JOURNAL</h2><div class="journal"><section class="page"><h3>YOUR NOTES</h3><p>What is actually off here, and which clues matter?</p><textarea id="j1"></textarea><button id="r1" class="primary">KEEP & REVEAL</button></section><section id="m1" class="page blank"></section></div>`;
+ $("r1").onclick=()=>{const v=$("j1").value.trim();if(!v)return $("j1").focus();state.journals[0]=v;$("m1").innerHTML=`<h3>MAGIC INK</h3><p>The manager and business need may be legitimate. The meaningful risk is customer information + export + an uncontrolled personal destination.</p><button id="d1" class="primary">CLOSE THE JOURNAL</button>`;$("d1").onclick=decision1};
+}
+function decision1(){
+ $("screen").innerHTML=nav(1)+`<h2>What do you do?</h2><div class="choices"><button class="choice" data-r="O"><strong>Hold and verify</strong>Pause the transfer and verify an approved controlled route.</button><button class="choice" data-r="K"><strong>Question the destination</strong>Challenge the personal destination but leave some process ambiguity.</button><button class="choice" data-r="S"><strong>Allow it</strong>The senior manager is authorized, so let the transfer proceed.</button></div><div class="evidenceGrid">${S1.map(c=>`<div class="clue"><strong>${c.name}</strong><div>${c.desc}</div></div>`).join("")}</div>`;
+ document.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>resolve1(b.dataset.r));
+}
+function resolve1(rating){
+ const what=rating==="O"?"You held the transfer and verified a controlled route.":rating==="K"?"You challenged the destination but did not fully anchor the response in the approved process.":"You treated management authorization as sufficient reason to allow the transfer.";
+ const why=rating==="O"?"Legitimate authority does not make an uncontrolled transfer safe.":rating==="K"?"You recognized the destination risk, but left avoidable ambiguity.":"Authorization and safe handling are different questions.";
+ const label=rating==="O"?"Strong judgment":rating==="K"?"Partial judgment":"Risk left unresolved";const r=applyScore("s1",rating,label,why,what);
+ $("screen").innerHTML=nav(1)+`<h2>${rating==="O"?"THE RISK WAS CONTAINED":rating==="K"?"THE DECISION LEFT A GAP":"THE BURIED FOUND AN OPENING"}</h2>${shift(r,rating,why,what)}${rating==="S"?`<div class="blackMark"><strong>BLACK MARK.</strong> The Buried fed on an unresolved risk. Later rooms may become less stable.</div>`:""}<button id="to2" class="primary">ENTER THE CLINIC</button>`;$("to2").onclick=renderScene2;
+}
+function renderScene2(){
+ state.stage=2;state.s2Route=[null,null,null];state.s2Selected=null;
+ const prior=state.decisions[0]?.rating,branch=prior==="O"?"Your first decision contained the apartment risk. The clinic begins stable.":prior==="K"?"An unresolved thread followed you here. The clinic needs a cleaner response.":"The Buried followed the unresolved risk here.";
+ $("screen").innerHTML=nav(2)+`<div class="timeBand">DEEP NIGHT · ROOM 2</div><div class="eyebrow">ACTION & ESCALATION</div><h2>THE CLINIC AFTER CLOSING</h2><div class="sceneReaction">The Watcher recognizes the pattern now: the risk is not only what happened, but what happens next.</div><div class="branch">${branch}</div><div class="searchInstruction"><strong>BUILD THE SAFEST THREE-STEP HANDOFF</strong>Drag three actions into the order you would take them.</div><p class="muted">You can also select an action, then choose a handoff slot.</p><section class="clinicScene"><article class="caseDoc"><div class="eyebrow">CONFIDENTIAL CONCERN</div><h3>After-hours disclosure</h3><p>“Please don't tell anyone.”</p><p>Potentially serious welfare concern. Disclosure time known. A designated after-hours response process exists.</p></article></section><section class="actionTray"><div class="eyebrow">AVAILABLE ACTIONS</div><div id="actionGrid" class="actionGrid"></div></section><section class="handoff"><div class="eyebrow">YOUR HANDOFF</div><div class="slots">${[0,1,2].map((i)=>`${i?'<div class="arrow">→</div>':""}<div class="slot" data-slot="${i}" tabindex="0" role="button" aria-label="Handoff ${i+1}"></div>`).join("")}</div><div class="controls"><button id="undo2" class="secondary">UNDO LAST</button><button id="seal2" class="primary" disabled>SEAL THE ROUTE</button></div></section>`;
+ renderActionCards();paintSlots();$("undo2").onclick=()=>{for(let i=2;i>=0;i--){if(state.s2Route[i]){state.s2Route[i]=null;break}}paintSlots();renderActionCards()};$("seal2").onclick=resolve2;
+}
+function renderActionCards(){
+ $("actionGrid").innerHTML=ACTIONS.map(a=>`<button class="actionCard ${state.s2Selected===a.id?"selected":""} ${state.s2Route.includes(a.id)?"used":""}" data-action="${a.id}" ${state.s2Route.includes(a.id)?"disabled":""}><strong>${a.title}</strong><div class="muted">${a.desc}</div></button>`).join("");
+ document.querySelectorAll("[data-action]").forEach(el=>{el.onclick=()=>{state.s2Selected=el.dataset.action;renderActionCards();announce(`${ACTIONS.find(a=>a.id===el.dataset.action).title} selected.`)};setupDrag(el,"action")});
+ document.querySelectorAll("[data-slot]").forEach(slot=>{slot.onclick=()=>{if(state.s2Selected)placeAction(state.s2Selected,Number(slot.dataset.slot))};slot.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&state.s2Selected){e.preventDefault();placeAction(state.s2Selected,Number(slot.dataset.slot))}}});
+}
+function placeAction(id,i){
+ const old=state.s2Route.indexOf(id);if(old>=0)state.s2Route[old]=null;state.s2Route[i]=id;state.s2Selected=null;state.telemetry.s2Moves++;paintSlots();renderActionCards();announce(`${ACTIONS.find(a=>a.id===id).title} placed in Handoff ${i+1}.`);
+}
+function paintSlots(){
+ document.querySelectorAll("[data-slot]").forEach(slot=>{const i=Number(slot.dataset.slot),id=state.s2Route[i],a=ACTIONS.find(x=>x.id===id);slot.classList.toggle("filled",!!a);slot.innerHTML=a?`<strong>HANDOFF ${i+1}</strong><div>${a.title}</div><button class="secondary" data-remove="${i}">REMOVE</button>`:`<strong>HANDOFF ${i+1}</strong><div class="muted">Drop an action here</div>`});
+ document.querySelectorAll("[data-remove]").forEach(b=>b.onclick=e=>{e.stopPropagation();state.s2Route[Number(b.dataset.remove)]=null;paintSlots();renderActionCards()});
+ $("seal2").disabled=state.s2Route.filter(Boolean).length!==3;
+}
+function resolve2(){
+ const ids=state.s2Route.filter(Boolean);let rating="S";
+ if(ids.join("|")==="preserve|limits|designated")rating="O";else if(ids.includes("preserve")&&ids.includes("designated")&&!ids.includes("secret")&&!ids.includes("broadcast"))rating="K";
+ const what=ids.map(id=>ACTIONS.find(a=>a.id===id).title).join(" → ");const why=rating==="O"?"You preserved the facts, set an honest confidentiality boundary, and used the designated response process in the correct order.":rating==="K"?"The route contains important protective actions but leaves avoidable ambiguity.":"The route promises secrecy, spreads information too broadly, or bypasses the process designed to respond.";
+ const label=rating==="O"?"Route held":rating==="K"?"Handoff left a gap":"Broken handoff",r=applyScore("s2",rating,label,why,what);
+ $("screen").innerHTML=nav(2)+`<h2>${rating==="O"?"THE ROUTE HELD":rating==="K"?"THE HANDOFF LEFT A GAP":"THE BURIED FOUND AN OPENING"}</h2><div class="caseDoc"><strong>CASE SEALED</strong><div>${ids.map(id=>`<span class="counter">${ACTIONS.find(a=>a.id===id).stamp}</span>`).join(" ")}</div></div>${shift(r,rating,why,what)}${rating==="S"?`<div class="blackMark"><strong>BLACK MARK.</strong> The handoff left enough uncertainty for The Buried to press closer.</div>`:""}<button id="j2b" class="primary">OPEN FIELD JOURNAL</button>`;$("j2b").onclick=journal2;
+}
+function journal2(){
+ $("screen").innerHTML=nav(2)+`<h2>FIELD JOURNAL</h2><div class="journal"><section class="page"><h3>YOUR NOTES</h3><p>What should never be promised when a serious concern may need escalation?</p><textarea id="j2"></textarea><button id="r2" class="primary">KEEP & REVEAL</button></section><section id="m2" class="page blank"></section></div>`;$("r2").onclick=()=>{const v=$("j2").value.trim();if(!v)return $("j2").focus();state.journals[1]=v;$("m2").innerHTML=`<h3>MAGIC INK</h3><p>Preserve essential facts, explain confidentiality limits honestly, and use the designated response route with minimum necessary disclosure.</p><button id="to3" class="primary">ENTER THE SANCTUARY</button>`;$("to3").onclick=renderScene3};
+}
+function s3Items(){return [...S3]}
+
+function renderScene3(){
+ state.stage=3;state.s3Discovered=new Set();state.s3Recovered=new Set();state.s3RecoverSelected=null;state.s3Packages=[];state.s3PackageSelected=null;
+ const prior=state.decisions[1]?.rating,branch=prior==="O"?"The clinic route held. The sanctuary is stable.":prior==="K"?"The previous handoff left residue. A false lead may be hiding among the evidence.":"The broken handoff followed you here. The Buried planted a false lead.";
+ $("screen").innerHTML=nav(3)+`<div class="timeBand">PRE-DAWN · ROOM 3</div><div class="eyebrow">RETENTION & READINESS</div><h2>THE SANCTUARY OF BORROWED NAMES</h2><div class="sceneReaction compact">${branch}</div><div id="s3Stage"></div>`;renderS3Recover();
+}
+function requiredRecovered(){return S3.filter(x=>state.s3Recovered.has(x.id)).length}
+function renderS3Recover(){
+ const items=s3Items();
+ $("s3Stage").innerHTML=`<div class="s3Top"><div><div class="eyebrow">PHASE 1 · SEARCH THE SANCTUARY</div><strong>NOTICE → INVESTIGATE → RECOVER</strong></div><span id="s3Count" class="counter">EVIDENCE RECOVERED · ${requiredRecovered()} / 5</span></div>
+ <div class="scene3Prompt"><strong>SEARCH THE SANCTUARY</strong>Investigate anything that might explain the access problem. Recover the evidence you believe matters.</div>
+ <section class="scene" id="sanctuaryScene"><img src="assets/cat-room3-clean.png" alt="Pre-dawn animal sanctuary with a staff terminal, shift board, volunteer assignment station, temporary-access materials, and animal-care equipment">
+ ${items.map(x=>{const recovered=state.s3Recovered.has(x.id),discovered=state.s3Discovered.has(x.id);const cls=recovered?"recovered":discovered?"discovered":"unseen";return `<button class="recoverable ${cls} ${state.s3RecoverSelected===x.id?"selected":""}" data-recover="${x.id}" aria-label="${discovered?`Discovered evidence: ${x.name}. Select to recover.`:`Investigate ${x.name}`}" style="left:${x.x}%;top:${x.y}%;width:150px;height:135px"></button>`}).join("")}
+ ${S3_DECOYS.map(x=>`<button class="decoyHotspot" data-decoy="${x.id}" aria-label="Inspect ${x.name}" style="left:${x.x}%;top:${x.y}%"></button>`).join("")}
+ ${items.filter(x=>state.s3Recovered.has(x.id)).map(x=>`<span class="discoveredResidue" style="left:${x.x}%;top:${x.y}%"></span>`).join("")}
+ </section>
+ <section class="recoveryTray"><div class="eyebrow">EVIDENCE TRAY</div><div class="trayDrop" id="trayDrop" tabindex="0" role="button" aria-label="Evidence tray"><strong>${requiredRecovered()<5?"DROP RECOVERED EVIDENCE HERE":"EVIDENCE RECOVERED · 5 / 5"}</strong></div><div id="recoveryStrip" class="recoveryStrip semantic"></div><div id="recoverFeedback" class="inspect" hidden></div><div class="controls"><button id="openWorkbench" class="primary" disabled>OPEN THE WORKBENCH</button></div></section>`;
+ document.querySelectorAll("[data-recover]").forEach(el=>{
+   const id=el.dataset.recover;
+   el.onclick=()=>{if(state.s3Recovered.has(id))return;if(!state.s3Discovered.has(id)){discoverS3(id);return}state.s3RecoverSelected=id;renderS3Recover();announce(`${S3.find(x=>x.id===id).name} selected. Move it to the Evidence Tray.`)};
+   if(state.s3Discovered.has(id)&&!state.s3Recovered.has(id))setupDrag(el,"recover");
+ });
+ document.querySelectorAll("[data-decoy]").forEach(el=>el.onclick=()=>inspectS3Decoy(el.dataset.decoy));
+ $("trayDrop").onclick=()=>{if(state.s3RecoverSelected)recoverEvidence(state.s3RecoverSelected)};
+ $("trayDrop").onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&state.s3RecoverSelected){e.preventDefault();recoverEvidence(state.s3RecoverSelected)}};
+ $("openWorkbench").onclick=renderS3Combine;
+ paintRecoverStrip();
+}
+function inspectS3Decoy(id){
+ const item=S3_DECOYS.find(x=>x.id===id),f=$("recoverFeedback");
+ f.hidden=false;f.innerHTML=`<strong>${item.name}</strong><p>${item.desc}</p>`;
+ announce(`${item.name} inspected.`);
+}
+function discoverS3(id){
+ const item=S3.find(x=>x.id===id);if(!item||state.s3Recovered.has(id))return;
+ state.s3Discovered.add(id);state.s3RecoverSelected=null;renderS3Recover();
+ const f=$("recoverFeedback");f.hidden=false;
+ f.innerHTML=`<strong>${item.name}</strong><p>${item.desc}</p><p><strong>RECOVERABLE.</strong> Drag this evidence into the tray when you're ready.</p>`;
+ announce(`${item.name} discovered. It can now be recovered.`);
+}
+function recoverEvidence(id){
+ const item=S3.find(x=>x.id===id);if(!item||state.s3Recovered.has(id)||!state.s3Discovered.has(id))return;
+ state.s3Recovered.add(id);state.s3RecoverSelected=null;renderS3Recover();
+ const f=$("recoverFeedback");f.hidden=false;
+ f.innerHTML=`<strong>${item.name} RECOVERED.</strong><p>${item.desc}</p>`;
+ announce(`${item.name} recovered. ${requiredRecovered()} of 5 evidence pieces recovered.`);
+}
+function paintRecoverStrip(){
+ $("s3Count").textContent=`EVIDENCE RECOVERED · ${requiredRecovered()} / 5`;
+ const recovered=S3.filter(x=>state.s3Recovered.has(x.id));
+ $("recoveryStrip").innerHTML=recovered.length?recovered.map(x=>`<div class="recoveredPiece"><strong>${x.name}</strong><div class="muted">${x.desc}</div></div>`).join(""):`<div class="muted">No evidence recovered yet.</div>`;
+ $("openWorkbench").disabled=requiredRecovered()!==5;
+}
+function packageItems(which){return Object.entries(state.s3Locations).filter(([id,loc])=>loc===which).map(([id])=>id)}
+function unusedEvidence(){return Object.entries(state.s3Locations).filter(([id,loc])=>loc==="UNUSED").map(([id])=>id)}
+function packagesReadyForHandoff(){return packageItems("A").length===2&&packageItems("B").length===2}
+function routesReadyToSeal(){return !!state.s3Routes.A&&!!state.s3Routes.B}
+function assertS3LocationIntegrity(){const ids=S3.map(x=>x.id),values=ids.map(id=>state.s3Locations[id]);return values.every(v=>["UNUSED","A","B"].includes(v))&&ids.length===new Set(ids).size&&packageItems("A").length+packageItems("B").length+unusedEvidence().length===5}
+function syncCombineGate(){const b=$("toRoute");if(!b)return;const ready=packagesReadyForHandoff();b.disabled=!ready;b.setAttribute("aria-disabled",String(!ready));b.classList.toggle("ready",ready)}
+function syncSealGate(){const b=$("seal3");if(!b)return;const ready=routesReadyToSeal();b.disabled=!ready;b.setAttribute("aria-disabled",String(!ready));b.classList.toggle("ready",ready)}
+function setEvidenceLocation(id,loc){if(!state.s3Recovered.has(id)||!["UNUSED","A","B"].includes(loc))return;if((loc==="A"||loc==="B")&&packageItems(loc).length>=2&&state.s3Locations[id]!==loc)return;state.s3Locations[id]=loc;if(!assertS3LocationIntegrity())throw new Error("Scene 3 evidence-location integrity failure");state.s3RecoverSelected=null;renderS3Combine();announce(`${S3.find(x=>x.id===id).name} moved to ${loc==="UNUSED"?"Recovered Evidence":`Package ${loc}`}.`)}
+function renderS3Combine(){
+ state.stage=3;
+ $("s3Stage").innerHTML=`<div class="s3Top"><div><div class="eyebrow">PHASE 2 · COMBINE</div><strong>Build two relationships from the recovered evidence.</strong></div></div><section class="workbench"><div class="eyebrow">RECOVERED EVIDENCE</div><p class="poolHint">Drag or select evidence to place it.</p><div id="evidenceDeck" class="evidenceDeck"></div><div class="packageArea"><div class="packageSlot" data-package="A" tabindex="0" role="button" aria-label="Package A"></div><div class="packageSlot" data-package="B" tabindex="0" role="button" aria-label="Package B"></div></div><div class="controls"><button id="toRoute" class="primary" disabled>CONTINUE TO HAND OFF</button></div></section>`;
+ paintCombine();
+ document.querySelectorAll("[data-package]").forEach(el=>{el.onclick=()=>{if(state.s3RecoverSelected)setEvidenceLocation(state.s3RecoverSelected,el.dataset.package)};el.onkeydown=e=>{if((e.key==="Enter"||e.key===" ")&&state.s3RecoverSelected){e.preventDefault();setEvidenceLocation(state.s3RecoverSelected,el.dataset.package)}}});
+ $("toRoute").onclick=()=>{if(packagesReadyForHandoff())renderS3Route()};syncCombineGate();
+}
+function paintCombine(){
+ const unused=unusedEvidence();
+ $("evidenceDeck").innerHTML=unused.map(id=>{const x=S3.find(v=>v.id===id);return `<button class="evidence ${state.s3RecoverSelected===id?"selected":""}" data-evidence="${id}"><strong>${x.name}</strong><div class="muted">${x.desc}</div></button>`}).join("")||`<div class="muted">No unused evidence remains.</div>`;
+ document.querySelectorAll("[data-evidence]").forEach(el=>{el.onclick=()=>{state.s3RecoverSelected=el.dataset.evidence;paintCombine();announce(`${S3.find(x=>x.id===el.dataset.evidence).name} selected.`)};setupDrag(el,"evidence")});
+ ["A","B"].forEach(which=>{const slot=document.querySelector(`[data-package="${which}"]`);if(!slot)return;const items=packageItems(which);slot.classList.toggle("filled",items.length>0);slot.innerHTML=`<strong>PACKAGE ${which}</strong>${items.map(id=>{const x=S3.find(v=>v.id===id);return `<div class="fragmentRow"><div class="fragment">${x.name}</div><button class="fragmentRemove" data-remove-package="${which}|${id}" aria-label="Return ${x.name} to recovered evidence">×</button></div>`}).join("")}${items.length===0?'<div class="muted">Drop evidence here</div>':""}<div class="packageCount">${items.length} / 2</div>`});
+ document.querySelectorAll("[data-remove-package]").forEach(btn=>{btn.onclick=e=>{e.stopPropagation();const [which,id]=btn.dataset.removePackage.split("|");state.s3Locations[id]="UNUSED";renderS3Combine();announce(`${S3.find(x=>x.id===id).name} returned to Recovered Evidence.`)}});syncCombineGate();
+}
+function renderS3Route(){state.s3PackageSelected=null;$("s3Stage").innerHTML=`<div class="s3Top"><div><div class="eyebrow">PHASE 3 · HAND OFF</div><strong>Send each package where it belongs.</strong></div></div><section class="workbench"><div id="builtPackages" class="routing"></div><div class="destinations"><button class="destination" data-dest="security"><strong>ACCESS / SECURITY PROCESS</strong></button><button class="destination" data-dest="supervisor"><strong>SANCTUARY SUPERVISOR</strong></button><button class="destination" data-dest="volunteer"><strong>RETURN TO VOLUNTEER</strong></button></div><div class="controls"><button id="backWork" class="secondary">BACK TO WORKBENCH</button><button id="seal3" class="primary" disabled>SEAL RESPONSE</button></div></section>`;$("backWork").onclick=renderS3Combine;$("seal3").onclick=resolve3;document.querySelectorAll("[data-dest]").forEach(d=>d.onclick=()=>{if(state.s3PackageSelected)setPackageRoute(state.s3PackageSelected,d.dataset.dest)});paintRoute()}
+function paintRoute(){$("builtPackages").innerHTML=["A","B"].map(which=>{const items=packageItems(which);return `<button class="packageCard ${state.s3PackageSelected===which?"selected":""}" data-pkg="${which}"><strong>PACKAGE ${which}</strong><div class="packageItems">${items.map(id=>S3.find(x=>x.id===id).name).join(" + ")}</div><div>${state.s3Routes[which]?`Placed at ${targetName(state.s3Routes[which])}`:"Not placed yet"}</div></button>`}).join("");document.querySelectorAll("[data-pkg]").forEach(el=>{el.onclick=()=>{state.s3PackageSelected=el.dataset.pkg;paintRoute();announce(`Package ${el.dataset.pkg} selected.`)};setupDrag(el,"package")});syncSealGate()}
+function targetName(id){return id==="security"?"ACCESS / SECURITY PROCESS":id==="supervisor"?"SANCTUARY SUPERVISOR":"RETURN TO VOLUNTEER"}
+function setPackageRoute(which,dest){state.s3Routes[which]=dest;state.s3PackageSelected=null;paintRoute();announce(`Package ${which} placed at ${targetName(dest)}.`)}
+function classifyPair(ids){const key=[...ids].sort().join("|");if(key===["identity","login"].sort().join("|"))return {kind:"risk",quality:"correct",idealRoute:"security"};if(key===["role","temp"].sort().join("|"))return {kind:"solution",quality:"correct",idealRoute:"supervisor"};if(ids.includes("owner"))return {kind:"mixed",quality:"disastrous",idealRoute:null};return {kind:"mixed",quality:"wrong",idealRoute:null}}
+function resolve3(){
+ const packageA=packageItems("A"),packageB=packageItems("B"),unused=unusedEvidence(),A=classifyPair(packageA),B=classifyPair(packageB),assessments={A,B};
+ const correctPairs=[A,B].filter(x=>x.quality==="correct").length,disastrous=[A,B].some(x=>x.quality==="disastrous"),correctRoutes=["A","B"].filter(which=>assessments[which].idealRoute&&state.s3Routes[which]===assessments[which].idealRoute).length;
+ let rating;if(correctPairs===2&&correctRoutes===2)rating="O";else if(correctPairs===2&&correctRoutes===1)rating="K";else rating="S";
+ const cards=["A","B"].map(which=>{const ids=packageItems(which),a=assessments[which],composition=ids.map(id=>S3.find(x=>x.id===id).name).join(" + ");let relationship=a.quality==="correct"?(a.kind==="risk"?"This pairing correctly identifies the identity/accountability risk.":"This pairing correctly identifies the role-matched access solution."):a.quality==="disastrous"?"This pairing treats context or urgency as if it established authority.":"These pieces do not form one governing relationship.";let routing=a.idealRoute?(state.s3Routes[which]===a.idealRoute?`Routed to the correct owner: ${targetName(state.s3Routes[which])}.`:`Routed to ${targetName(state.s3Routes[which])} instead of ${targetName(a.idealRoute)}.`):"Because the package carried the wrong meaning, routing could not repair it.";return `<div class="consequenceCard"><strong>PACKAGE ${which}</strong><div>${composition}</div><p>${relationship}</p><p>${routing}</p></div>`}).join("");
+ let why;if(rating==="O")why="You built both governing relationships correctly and handed each one to the process that owns it.";else if(rating==="K")why="You built both governing relationships correctly, but one handoff went to the wrong owner.";else if(disastrous)why="A contextual fact was treated as if it authorized access. That corrupted the response before routing.";else why="At least one package carried the wrong relationship forward, so the handoff could not reliably protect identity, accountability, or role-matched access.";
+ const unusedText=unused.length?S3.find(x=>x.id===unused[0]).name:"None",details=`Package A: ${packageA.map(id=>S3.find(x=>x.id===id).name).join(" + ")} → ${targetName(state.s3Routes.A)}; Package B: ${packageB.map(id=>S3.find(x=>x.id===id).name).join(" + ")} → ${targetName(state.s3Routes.B)}; Unused: ${unusedText}`,label=rating==="O"?"Transfer complete":rating==="K"?"Transfer left a gap":"Transfer failed",r=applyScore("s3",rating,label,why,details);
+ let unusedFeedback="";if(unused.length){const u=unused[0];unusedFeedback=`<div class="consequenceCard"><strong>UNUSED EVIDENCE</strong><div>${S3.find(x=>x.id===u).name}</div><p>${u==="owner"?"Mara's absence explained the urgency. It did not authorize another person to use her identity.":"This item was left out of the final relationships."}</p></div>`}
+ $("screen").innerHTML=nav(3)+`<h2>${rating==="O"?"THE TRANSFER HELD":rating==="K"?"THE TRANSFER LEFT A GAP":"THE BURIED BROKE THROUGH"}</h2><div class="consequenceGrid">${cards}${unusedFeedback}</div>${shift(r,rating,why,details)}${rating==="S"?`<div class="blackMark"><strong>BLACK MARK.</strong> The wrong relationship reached the handoff. The Buried took advantage of the error.</div>`:""}<button id="j3b" class="primary">OPEN FIELD JOURNAL</button>`;$("j3b").onclick=journal3;
+}
+function journal3(){
+ $("screen").innerHTML=nav(3)+`<h2>FIELD JOURNAL</h2><div class="journal"><section class="page"><h3>YOUR NOTES</h3><p>What stayed true when the surface details changed?</p><textarea id="j3"></textarea><button id="r3" class="primary">KEEP & REVEAL</button></section><section id="m3" class="page blank"></section></div>`;$("r3").onclick=()=>{const v=$("j3").value.trim();if(!v)return $("j3").focus();state.journals[2]=v;$("m3").innerHTML=`<h3>MAGIC INK</h3><p>Legitimate need does not justify borrowed identity or excessive access. Match access to the role and preserve individual accountability.</p><button id="finalBtn" class="primary">FINAL JOURNAL</button>`;$("finalBtn").onclick=renderFinal};
+;syncS3HandoffButton()}
+function renderFinal(){
+ state.stage=4;$("screen").innerHTML=nav(4)+`<div class="timeBand">SUNRISE APPROACHES · FINAL JOURNAL</div><h2>WHAT THE NIGHT TAUGHT YOU</h2><div class="evidenceGrid">${state.decisions.map((d,i)=>`<div class="clue"><div class="eyebrow">${["RECOGNITION & JUDGMENT","ACTION & ESCALATION","RETENTION & READINESS"][i]}</div><strong>${d.label}</strong><p>${d.details}</p><p>${d.why||d.principle}</p><p>${d.before}% → ${d.after}% (${d.delta>0?"+":""}${d.delta}%)</p><p class="muted">${state.journals[i]}</p></div>`).join("")}</div><div class="journal"><section class="page"><h3>FINAL REFLECTION</h3><p>When the surface details change, what will tell you that the same underlying risk is present?</p><textarea id="jf"></textarea><button id="rf" class="primary">KEEP & REVEAL</button></section><section id="mf" class="page blank"></section></div>`;
+ $("rf").onclick=()=>{const v=$("jf").value.trim();if(!v)return $("jf").focus();$("mf").innerHTML=`<h3>HOW TO RESTORE YOUR MEMORY</h3>${state.decisions.map((d,i)=>`<p><strong>${["Recognition & Judgment","Action & Escalation","Retention & Readiness"][i]}:</strong> ${d.rating==="O"?"You demonstrated reliable reasoning here. Preserve this pattern when the details change.":d.rating==="K"?"You recognized much of the pattern, but left avoidable ambiguity. Anchor your next response more directly in the controlled process.":"Start by identifying the governing risk before you act, then choose the controlled response that resolves it."}</p>`).join("")}<div class="finalHeuristic"><strong>PORTABLE RULE</strong><p>Look past titles, urgency, authority, and surface details. Identify what is being protected, what action changes its exposure, whether identity and accountability remain intact, whether the method is controlled, and who actually owns the response.</p></div><button id="sun" class="primary">MEET THE SUNRISE</button>`;$("sun").onclick=ending};
+}
+function ending(){
+ const perfect=state.score===100;
+ const weak=state.score<50;
+ $("screen").innerHTML=nav(4)+`<div class="timeBand">SUNRISE</div><h2>${perfect?"FULL RESTORATION":weak?"THE NIGHT HELD — BARELY":"SUNRISE"}</h2><img class="sunrise" src="assets/sunrise.png" alt="Sunrise ending the supernatural night"><div class="complete"><strong>FINAL MEMORY RESTORED: ${state.score}%</strong><p>${perfect?"The Watcher is fully restored. Dawn breaks across the Archive as The Buried recedes behind the sealed cases.":weak?"You survived the night, but The Buried kept too many fragments. Your journal shows exactly which reasoning patterns need another pass.":"The Archive survives until sunrise. Most of the Watcher has returned, but a few fragments remain unstable."}</p></div><div class="endActions"><button id="restart" class="primary">ENTER THE ARCHIVE AGAIN</button></div>`;
+ $("restart").onclick=reset;
+}
+function setupDrag(el,type){
+ let ghost=null,active=false,target=null,grabX=0,grabY=0,pointerId=null;
+ const clear=()=>document.querySelectorAll(".hover,.dragReady").forEach(x=>x.classList.remove("hover","dragReady"));
+ const candidates=()=>type==="action"?[...document.querySelectorAll("[data-slot]")]:type==="recover"?($("trayDrop")?[$("trayDrop")]:[]):type==="evidence"?[...document.querySelectorAll("[data-package]")]:type==="package"?[...document.querySelectorAll("[data-dest]")]:[];
+ const targetAt=(x,y)=>candidates().find(node=>{const r=node.getBoundingClientRect();return x>=r.left&&x<=r.right&&y>=r.top&&y<=r.bottom})||null;
+ const cleanupGhost=()=>{document.querySelectorAll(".dragGhost").forEach(g=>g.remove());ghost=null};
+ const moveGhost=(x,y)=>{if(!ghost)return;ghost.style.left=(x-grabX)+"px";ghost.style.top=(y-grabY)+"px"};
+ const makeGhost=e=>{cleanupGhost();const r=el.getBoundingClientRect();if(type==="recover"){const item=S3.find(x=>x.id===el.dataset.recover);ghost=document.createElement("div");ghost.className="dragGhost recoveryGhost";ghost.innerHTML=`<span class="dragGhostTitle">${item?.name||"Recovered evidence"}</span><span class="dragGhostHint">Drag to Evidence Tray</span>`;grabX=24;grabY=24}else{ghost=el.cloneNode(true);ghost.classList.add("dragGhost");ghost.removeAttribute("id");ghost.style.width=r.width+"px";ghost.style.height=r.height+"px";grabX=Math.max(0,Math.min(r.width,e.clientX-r.left));grabY=Math.max(0,Math.min(r.height,e.clientY-r.top))}document.body.appendChild(ghost);moveGhost(e.clientX,e.clientY)};
+ el.addEventListener("pointerdown",e=>{if(e.button!==undefined&&e.button!==0)return;if(el.disabled)return;active=true;pointerId=e.pointerId;el.setPointerCapture?.(e.pointerId);makeGhost(e);document.body.classList.add("isDragging");if(type==="recover")$("trayDrop")?.classList.add("dragReady");e.preventDefault()});
+ el.addEventListener("pointermove",e=>{if(!active||!ghost)return;moveGhost(e.clientX,e.clientY);clear();if(type==="recover")$("trayDrop")?.classList.add("dragReady");target=targetAt(e.clientX,e.clientY);if(target)target.classList.add("hover")});
+ const finish=e=>{if(!active)return;target=targetAt(e.clientX,e.clientY)||target;active=false;try{if(pointerId!==null)el.releasePointerCapture?.(pointerId)}catch(_){}clear();document.body.classList.remove("isDragging");if(type==="action"&&target)placeAction(el.dataset.action,Number(target.dataset.slot));if(type==="recover"&&target)recoverEvidence(el.dataset.recover);if(type==="evidence"&&target)setEvidenceLocation(el.dataset.evidence,target.dataset.package);if(type==="package"&&target)setPackageRoute(el.dataset.pkg,target.dataset.dest);cleanupGhost();target=null;pointerId=null};
+ el.addEventListener("pointerup",finish);el.addEventListener("pointercancel",()=>{active=false;clear();document.body.classList.remove("isDragging");cleanupGhost();target=null;pointerId=null});
+}
+function reset(){
+ state.score=0;state.black=0;state.decisions=[];state.journals=["","",""];state.stage=0;
+ state.s1Found=new Set();state.s2Route=[null,null,null];state.s2Selected=null;
+ state.s3Discovered=new Set();state.s3Recovered=new Set();state.s3RecoverSelected=null;
+ state.s3Locations={login:"UNUSED",identity:"UNUSED",role:"UNUSED",temp:"UNUSED",owner:"UNUSED"};
+ state.s3Routes={A:null,B:null};state.s3PackageSelected=null;
+ state.telemetry={s1Clicks:0,s2Moves:0,s3WrongCombos:0,s3WrongRoutes:0,falseLead:false};
+ document.querySelectorAll(".dragGhost").forEach(g=>g.remove());
+ updateHUD();renderLanding();
+}
+if(new URLSearchParams(location.search).get("qa")==="hotspots"){
+ document.documentElement.dataset.qa="hotspots";
+ const obs=new MutationObserver(()=>document.querySelectorAll(".hotspot,.recoverable").forEach(x=>x.classList.add("debugHotspot")));
+ obs.observe(document.body,{subtree:true,childList:true});
+}
+updateHUD();renderLanding();
+</script>
+</body>
+</html>

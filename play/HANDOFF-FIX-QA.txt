@@ -1,0 +1,6 @@
+{
+  "initial_disabled": true,
+  "after_one_disabled": true,
+  "after_two_enabled": true,
+  "advances": true
+}
